@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import getAllProducts from "../../apiCalls/get-all-products";
@@ -44,10 +45,12 @@ const ProductCard = ({ id, name, price }) => {
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
-
+  const router = useRouter();
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [verified, setVerified] = useState(false);
-
+  useEffect(() => {
+    router.push('/login');
+  }, []);
   useEffect(() => {
     setVerificationLoading(true);
     verifyToken()
