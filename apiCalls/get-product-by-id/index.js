@@ -1,25 +1,18 @@
-import axios from "axios";
+import { connectDB, disconnectDB } from "../../../../lib/databaseConnection";
+import Product from "../../../../models/Product";
 
-const BASE_URL = "http://localhost:3000";
-
-const getProductById = async (id) => {
-  console.log(id);
-  let data = JSON.stringify({
-    id,
-  });
-
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/get-product-by-id`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  const response = await axios.request(config);
-  return response;
+const handler = async (req, res) => {
+  try {
+    await connectDB();
+    const { id } = req.body;
+    const product = await Product.findById(id);
+    res.json(product);
+  } catch (error) {
+    console.error("Error retrieving product:", error);
+    res.status(500).json({ error: "Unable to retrieve product" });
+  } finally {
+    // disconnectDB();
+  }
 };
 
-export default getProductById;
+export default handler;

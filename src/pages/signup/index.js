@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import signup from "../../../apiCalls/signup";
-import { Box, Button, Input } from "@mui/material";
+import { Box, Button, Input, TextField } from "@mui/material";
+import Link from "next/link";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -23,16 +24,19 @@ const Signup = () => {
     >
       <Box sx={{ width: "min(90%, 500px)" }}>
         <Box>
-          <Input
-            placeholder="Email"
+          <TextField
+            label="Email"
+            variant="standard"
             type="text"
             sx={{ width: "100%" }}
             onChange={(e) => setEmail(e.target.value)}
           />
         </Box>
         <Box>
-          <Input
-            placeholder="Password"
+          <TextField
+            id="standard-error"
+            label="Password"
+            variant="standard"
             type="password"
             sx={{ mt: 1, width: "100%" }}
             onChange={(e) => setPassword(e.target.value)}
@@ -40,11 +44,9 @@ const Signup = () => {
         </Box>
         <Box>
           <Button
-            variant="conatined"
+            variant="contained"
             color="primary"
             sx={{
-              backgroundColor: "blue",
-              color: "white",
               mt: 3,
               width: "100%",
             }}
@@ -52,6 +54,11 @@ const Signup = () => {
           >
             Submit
           </Button>
+          <Link href="/login">
+            <p style={{ marginTop: "10px", textAlign: "center" }}>
+              Log-in instead
+            </p>
+          </Link>
         </Box>
       </Box>
     </Box>

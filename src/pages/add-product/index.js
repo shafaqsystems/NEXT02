@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import createProduct from "../../../apiCalls/create-product";
 import verifyToken from "../../../apiCalls/verify-token";
 import { Box, Button, Input } from "@mui/material";
+import Navbar from "../../../components/Navbar";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
@@ -34,6 +35,7 @@ const AddProduct = () => {
   };
   return (
     <>
+      <Navbar />
       {verificationLoading ? (
         <p>Verifying...</p>
       ) : !verified ? (

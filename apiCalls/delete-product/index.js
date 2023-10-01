@@ -1,24 +1,24 @@
-import axios from "axios";
+import { connectDB, disconnectDB } from "../../../../lib/databaseConnection";
+import Product from "../../../../models/Product";
 
-const BASE_URL = "http://localhost:3000";
+const handler = async (req, res) => {
+  try {
+    const productId = req.body.id;
+    await connectDB();
 
-const deleteProduct = async (id) => {
-  let data = JSON.stringify({
-    id,
-  });
+    const deletedProduct = await Product.findByIdAndDelete(productId);
 
-  let config = {
-    method: "delete",
-    maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/delete-product`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
+    if (!deletedProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
 
-  const response = axios.request(config);
-  return response;
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ error: "Unable to delete product" });
+  } finally {
+    // disconnectDB();
+  }
 };
 
-export default deleteProduct;
+export default handler;

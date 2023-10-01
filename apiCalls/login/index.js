@@ -1,25 +1,35 @@
-import axios from "axios";
+import { connectDB, disconnectDB } from "../../../../lib/databaseConnection";
+import User from "../../../../models/User";
+const jwt = require("jsonwebtoken");
 
-const BASE_URL = "http://localhost:3000";
+const jwtSecret = "hello1234";
 
-const login = async (email, password) => {
-  let data = JSON.stringify({
-    email,
-    password,
-  });
+const handler = async (req, res) => {
+  const { email, password } = req.body;
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/login`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
+  try {
+    await connectDB();
+    const user = await User.findOne({ email });
 
-  const response = await axios.request(config);
-  return response;
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const passwordMatch = password === user.password;
+
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign({ userId: user._id, email: user.email }, jwtSecret);
+
+    res.json({ token });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: "Internal server error" });
+  } finally {
+    // disconnectDB();
+  }
 };
 
-export default login;
+export default handler;

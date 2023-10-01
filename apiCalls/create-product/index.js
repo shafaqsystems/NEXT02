@@ -1,29 +1,26 @@
-import axios from "axios";
+import { connectDB, disconnectDB } from "../../../../lib/databaseConnection";
+import Product from "../../../../models/Product";
 
-const BASE_URL = "http://localhost:3000";
+const handler = async (req, res) => {
+  try {
+    const { name, desc, brand, category, weight, price } = req.body;
+    await connectDB();
+    const product = await Product.create({
+      name,
+      desc,
+      brand,
+      category,
+      weight,
+      price,
+    });
 
-const createProduct = async (name, desc, brand, category, weight, price) => {
-  let data = JSON.stringify({
-    name,
-    desc,
-    brand,
-    category,
-    weight,
-    price,
-  });
-
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/create-product`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  const response = await axios.request(config);
-  return response;
+    res.status(201).json(product);
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({ error: "Unable to create product" });
+  } finally {
+    // disconnectDB();
+  }
 };
 
-export default createProduct;
+export default handler;

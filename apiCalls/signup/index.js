@@ -1,27 +1,24 @@
-import axios from "axios";
+import { connectDB, disconnectDB } from "../../../../lib/databaseConnection";
+import User from "../../../../models/User";
 
-const BASE_URL = "http://localhost:3000";
+const handler = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-const signup = async (email, password) => {
-  console.log(email, password);
+    await connectDB();
 
-  let data = JSON.stringify({
-    email,
-    password,
-  });
+    const user = await User.create({
+      email,
+      password,
+    });
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/signup`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  const response = await axios.request(config);
-  return response;
+    res.json({ user });
+  } catch (error) {
+    console.log(error);
+    res.json({ error });
+  } finally {
+    // disconnectDB();
+  }
 };
 
-export default signup;
+export default handler;
